@@ -13,6 +13,8 @@ services:
         ports:
           - "9113:9113"
         command: -nginx.scrape-uri http://nginx/stub_status
+        depends_on:
+          - nginx
 
     prometheus:
         image: prom/prometheus
@@ -25,3 +27,11 @@ services:
         image: grafana/grafana
         ports:
           - "3000:3000"
+        volumes:
+          - grafana:/var/lib/grafana
+        depends_on:
+          - prometheus
+
+volumes:
+    grafana:
+      driver: local
