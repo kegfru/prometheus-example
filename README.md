@@ -34,8 +34,14 @@ http://192.168.88.225:9090/graph
 
 ## Grafana
 ```
-docker run -d --name=grafana -p 3000:3000 grafana/grafana
+docker run -d --rm --name=grafana -p 3000:3000 grafana/grafana
 ```
 
 #### Test
 http://192.168.88.225:3000
+
+
+## Stop
+```
+docker stop prometheus grafana nginx-prometheus-exporter nginx
+```
