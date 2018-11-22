@@ -15,7 +15,7 @@ http://192.168.88.225/nginx_status
 ## Nginx exporter
 https://github.com/nginxinc/nginx-prometheus-exporter
 ```
-docker run -d --rm -p 9113:9113 --name nginx-prometheus-exporter nginx/nginx-prometheus-exporter:0.2.0 -nginx.scrape-uri http://192.168.88.225/nginx_status
+docker run -d --rm -p 9113:9113 --name nginx-prometheus-exporter nginx/nginx-prometheus-exporter:0.2.0 -nginx.scrape-uri http://192.168.88.225/stub_status
 ```
 
 #### Test
