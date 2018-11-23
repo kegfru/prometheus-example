@@ -1,0 +1,39 @@
+modules:
+  http_2xx:
+    prober: http
+    http:
+      tls_config:
+        insecure_skip_verify: true
+      preferred_ip_protocol: "ip4"
+  http_post_2xx:
+    prober: http
+    http:
+      method: POST
+  icmp:
+    prober: icmp
+    icmp:
+        preferred_ip_protocol: "ip4"
+  irc_banner:
+    prober: tcp
+    tcp:
+      query_response:
+      - send: NICK prober
+      - send: USER prober prober prober :prober
+      - expect: PING :([^ ]+)
+        send: PONG ${1}
+      - expect: ^:[^ ]+ 001
+  pop3s_banner:
+    prober: tcp
+    tcp:
+      query_response:
+      - expect: ^+OK
+      tls: true
+  ssh_banner:
+    prober: tcp
+    tcp:
+      query_response:
+      - expect: ^SSH-2.0-
+  tcp_connect:
+    prober: tcp
+    tcp:
+        preferred_ip_protocol: "ip4"
