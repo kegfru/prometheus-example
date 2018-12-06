@@ -3,20 +3,66 @@ version: '2.2'
 services:
     prometheus:
         image: prom/prometheus
-        ports:
-          - "9090:9090"
+        restart: always
+#        ports:
+#          - "9090:9090"
         volumes:
           - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        command:
+          - '--storage.tsdb.retention=24h'
+          - '--config.file=/etc/prometheus/prometheus.yml'
+          - '--storage.tsdb.path=/prometheus'
+          - '--web.console.libraries=/etc/prometheus/console_libraries'
+          - '--web.console.templates=/etc/prometheus/consoles'
+          - '--web.enable-lifecycle'
+        logging:
+            driver: none
 
     blackbox:
         image: bitnami/blackbox-exporter
-        ports:
-          - "9115:9115"
+        restart: always
+#        ports:
+#          - "9115:9115"
         volumes:
           - ./blackbox-exporter/blackbox.yml:/opt/bitnami/blackbox-exporter/blackbox.yml
+        logging:
+            driver: none
+
+    node-exporter:
+        image: prom/node-exporter
+        restart: always
+#        ports:
+#          - 9100:9100
+        volumes:
+          - /proc:/host/proc:ro
+          - /sys:/host/sys:ro
+          - /etc/hostname:/etc/hostname:ro
+          - /:/rootfs:ro
+        command:
+          - '--path.procfs=/host/proc'
+          - '--path.sysfs=/host/sys'
+          - --collector.filesystem.ignored-mount-points
+          - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+        logging:
+            driver: none
+
+    process-exporter:
+        image: ncabatoff/process-exporter:0.4.0
+        restart: always
+#        ports:
+#          - 9256:9256
+        volumes:
+          - /proc:/host/proc:ro
+          - ./process-exporter/process-exporter.yml:/config/process-exporter.yml
+        command: ["-procfs", "/host/proc", "-config.path", "/config/process-exporter.yml", "-debug"]
+        environment:
+          config.path: /config/process-exporter.yml
+        logging:
+            driver: none
 
     grafana:
         image: grafana/grafana
+        restart: always
         ports:
           - "3000:3000"
         volumes:
@@ -26,6 +72,9 @@ services:
           - ./grafana/dashboards/:/var/lib/grafana/dashboards/
         environment:
           GF_SECURITY_ADMIN_PASSWORD: pass
+#          GF_INSTALL_PLUGINS: grafana-piechart-panel
+#          http_proxy: http://webproxy.lon.corp.services:80
+#          https_proxy: http://webproxy.lon.corp.services:80
         depends_on:
           - prometheus
         logging:
@@ -34,3 +83,11 @@ services:
 volumes:
     grafana:
       driver: local
+
+networks:
+    default:
+      ipam:
+        driver: default
+        config:
+          - subnet: 172.20.0.0/16
+

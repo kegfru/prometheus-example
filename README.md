@@ -1,8 +1,10 @@
-# prometheus-example
-small example of prometheus with nginx exporter in docker
+#### RUN
+docker-compose up -d
 
-## RUN
+#### STOP
+docker-compose down -v
 
-```
-docker-compose up
-```
+
+#####
+find . -type d -exec chmod 0755 {} \;
+find . -type f -exec chmod 0644 {} \;

@@ -5,6 +5,15 @@ modules:
       tls_config:
         insecure_skip_verify: true
       preferred_ip_protocol: "ip4"
+
+  http_2xx_auth:
+    prober: http
+    http:
+      preferred_ip_protocol: "ip4"
+      basic_auth:
+        username: 'Administrator'
+        password: 'password'
+
   http_post_2xx:
     prober: http
     http:

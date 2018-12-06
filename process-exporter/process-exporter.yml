@@ -1,0 +1,32 @@
+process_names:
+  # comm is the second field of /proc/<pid>/stat minus parens.
+  # It is the base executable name, truncated at 15 chars.  
+  # It cannot be modified by the program, unlike exe.
+#  - comm:
+#    - bash
+#    - q
+
+  # exe is argv[0]. If no slashes, only basename of argv[0] need match.
+  # If exe contains slashes, argv[0] must match exactly.
+#  - exe:
+#    - //bin/java
+#    - postgres
+#    - /bin/prometheus
+
+  # cmdline is a list of regexps applied to argv.
+  # Each must match, and any captures are added to the .Matches map.
+#  - name: "{{.ExeFull}}:{{.Matches.Cfgfile}}"
+#    exe: 
+#    - /bin/process-exporter
+#    cmdline: 
+#    - -config.path\s+(?P<Cfgfile>\S+)
+
+  - name: "{{.ExeFull}}:{{.Matches.EQ}}:{{.Matches.PATH}}"
+    exe:
+    - q
+    - ./rfavelocity
+    - /bin/bash
+    - java
+    cmdline:
+    - -process\s+(?P<EQ>\S+)
+    - -logfile\s+(?P<PATH>\S+)
